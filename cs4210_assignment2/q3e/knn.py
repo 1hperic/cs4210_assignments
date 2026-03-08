@@ -18,6 +18,9 @@ df = pd.read_csv('email_classification.csv')
 for _, row in df.iterrows():
     db.append(row.tolist())
 
+error = 0
+
+
 #Loop your data to allow each instance to be your test set
 for i in db:
 
@@ -26,28 +29,46 @@ for i in db:
     #Convert each feature value to float to avoid warning messages
     #--> add your Python code here
 
+    X = []
+    Y= []
+
+    for j in db:
+        if i != j:
+            features = [float(value) for value in j[0:20]]
+            X.append(features)
+
     #Transform the original training classes to numbers and add them to the vector Y.
     #Do not forget to remove the instance that will be used for testing in this iteration.
     #For instance, Y = [1, 2, ,...].
     #Convert each feature value to float to avoid warning messages
     #--> add your Python code here
+            classification = {"ham": 1, "spam": 2}
+            Y.append(float(classification[j[20]]))
 
     #Store the test sample of this iteration in the vector testSample
     #--> add your Python code here
+    testSample = [float(value) for value in i[0:20]]
 
     #Fitting the knn to the data using k = 1 and Euclidean distance (L2 norm)
     #--> add your Python code here
-    clf =
+    clf = KNeighborsClassifier(n_neighbors=1, metric='euclidean')
+    clf.fit(X, Y)
 
     #Use your test sample in this iteration to make the class prediction. For instance:
     #class_predicted = clf.predict([[1, 2, 3, 4, 5, ..., 20]])[0]
     #--> add your Python code here
+    classPredicted = clf.predict([testSample])[0]
 
     #Compare the prediction with the true label of the test instance to start calculating the error rate.
     #--> add your Python code here
+    trueLabel = 2 if i[20] == "spam" else 1
+    if classPredicted != trueLabel:
+        error+=1
 
 #Print the error rate
 #--> add your Python code here
+errorRate = error/len(db)
+print("LOO-CV Error Rate: ", errorRate)
 
 
 
